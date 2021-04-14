@@ -26,9 +26,9 @@ const movieCreationValidator = celebrate({
       return errs.message("Невалидный URL");
     }),
     description: Joi.string().required(),
-    nameRU: Joi.string().required,
-    nameEN: Joi.string().required,
-    movieId: Joi.string().required
+    nameRU: Joi.string().required(),
+    nameEN: Joi.string().required(),
+    movieId: Joi.string().required()
   })
 
 });
