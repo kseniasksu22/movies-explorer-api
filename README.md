@@ -1,2 +1,8 @@
-# movies-explorer-api
-Репозиторий для бэкенда проекта Movies-explorer
+# Проект Mesto бэкенд
+
+
+
+## Запуск проекта
+
+`npm run start` — запускает сервер   
+`npm run dev` — запускает сервер с hot-reload
