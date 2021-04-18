@@ -28,7 +28,7 @@ const createUser = (req, res, next) => {
   } = req.body;
 
   if (!email || !password) {
-    throw new BadRequestErr("Неккоректные данныею Передайте правильные почту или пароль");
+    throw new BadRequestErr("Неккоректные данные. Передайте правильные почту или пароль");
   }
   User.findOne({ email }).then((data) => {
     if (data) {
