@@ -1,4 +1,8 @@
-# movies-explorer-api
-Репозиторий для бэкенда проекта Movies-explorer
+# Бэкенд проекта movies-explorer-api
 
-#Ссылка: https://api.moviesksu.nomoredomains.club
+Ссылка: https://api.moviesksu.nomoredomains.club/
+
+## Запуск проекта
+
+`npm run start` — запускает сервер   
+`npm run dev` — запускает сервер с hot-reload
