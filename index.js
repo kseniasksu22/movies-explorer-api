@@ -1,7 +1,7 @@
 const express = require("express");
 
 const mongoose = require("mongoose");
-
+const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const { errors } = require("celebrate");
 require("dotenv").config();
@@ -39,11 +39,13 @@ mongoose
     console.log("Not Connected to Database ERROR! ", err);
   });
 
-app.use(limiter);
+app.use(helmet());
+
 app.use(parser.json());
 app.use(parser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
+app.use(limiter);
 
 app.get("/crash-test", () => {
   setTimeout(() => {
