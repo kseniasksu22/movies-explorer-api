@@ -1,6 +1,6 @@
-# Проект Mesto бэкенд
+# Бэкенд проекта movies-explorer-api
 
-
+Ссылка: https://api.moviesksu.nomoredomains.club/
 
 ## Запуск проекта
 
