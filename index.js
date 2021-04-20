@@ -6,28 +6,25 @@ const rateLimit = require("express-rate-limit");
 const { errors } = require("celebrate");
 require("dotenv").config();
 const parser = require("body-parser");
-const {
-  createUser,
-  login,
-} = require("./controllers/users");
-const { loginValidator, signupValidator } = require("./middlewares/validator");
+
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const NotFoundErr = require("./errors/NotFoundErr");
-const auth = require("./middlewares/auth");
+const { notFoundErr, serverErr } = require("./utils/errorTexts.js");
+const dataBaseUrl = require("./utils/config.js");
+
+const { PORT = 3000 } = process.env;
 
 const app = express();
-const PORT = 3000;
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20000
 });
 
-const usersRouter = require("./routes/users.js");
-const moviesRouter = require("./routes/movies.js");
+const router = require("./routes/login");
 
 mongoose
-  .connect("mongodb://localhost:27017/moviesdb", {
+  .connect(dataBaseUrl, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
@@ -47,19 +44,16 @@ app.use(parser.urlencoded({ extended: true }));
 app.use(requestLogger);
 app.use(limiter);
 
+app.use("/", router);
+
 app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Сервер сейчас упадёт");
   }, 0);
 });
-app.post("/signin", loginValidator, login);
-app.post("/signup", signupValidator, createUser);
-
-app.use("/", auth, usersRouter);
-app.use("/", auth, moviesRouter);
 
 app.use("*", () => {
-  throw new NotFoundErr("Страница не найдена");
+  throw new NotFoundErr(notFoundErr.notFoundPage);
 });
 
 app.use(errorLogger);
@@ -69,7 +63,7 @@ app.use((err, req, res, next) => {
   if (err.statusCode) {
     res.status(err.statusCode).send({ message: err.message });
   } else {
-    res.status(500).send({ message: "На сервере произошла ошибка" });
+    res.status(500).send({ message: serverErr.error });
   }
   next();
 });

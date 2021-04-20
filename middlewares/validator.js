@@ -28,7 +28,12 @@ const movieCreationValidator = celebrate({
     description: Joi.string().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-    movieId: Joi.string().required()
+    movieId: Joi.string().custom((id, errs) => {
+      if (validator.isDecimal(id)) {
+        return id;
+      }
+      return errs.message("Невалидный id");
+    }).required(),
   })
 
 });

@@ -5,6 +5,10 @@ const BadRequestErr = require("../errors/BadRequestErr");
 const ServerErr = require("../errors/ServerErr");
 const ForbiddenErr = require("../errors/ForbiddenErr");
 
+const {
+  badRequestError, forbiddenErr, notFoundErr, serverErr, statusOk
+} = require("../utils/errorTexts.js");
+
 const getMovie = (req, res, next) => {
   moviesModel
     .find({})
@@ -24,7 +28,7 @@ const createMovie = (req, res, next) => {
     })
     .then((movie) => {
       if (!movie) {
-        throw new BadRequestErr("Нет такого фильма");
+        throw new BadRequestErr(badRequestError.fatal);
       }
       moviesModel.findById(movie._id).populate("owner").then((item) => {
         res.send({ data: item });
@@ -32,9 +36,9 @@ const createMovie = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === "ValidationError") {
-        throw new BadRequestErr("Некорректный Url или название");
+        throw new BadRequestErr(badRequestError.fatalMovieCreated);
       } else {
-        throw new ServerErr("Ошибка сервера");
+        throw new ServerErr(serverErr.error);
       }
     }).catch(next);
 };
@@ -45,15 +49,15 @@ const deleteMovie = (req, res, next) => {
     .then((movie) => {
       console.log(movie);
       if (!movie) {
-        throw new NotFoundErr("Фильм не найден");
+        throw new NotFoundErr(notFoundErr.movieId);
       }
 
       if (movie.owner.toString() !== req.user._id) {
-        throw new ForbiddenErr("Невозможно удалить Фильм");
+        throw new ForbiddenErr(forbiddenErr.deleteMovie);
       }
       moviesModel.deleteOne(movie)
         .then(() => {
-          return res.send({ message: "Фильм удалён" });
+          return res.send({ message: statusOk.deleteMovie });
         }).catch(next);
     }).catch(next);
 };

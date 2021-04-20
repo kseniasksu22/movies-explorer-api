@@ -7,13 +7,17 @@ const ConflictErr = require("../errors/ConflictErr");
 const BadRequestErr = require("../errors/BadRequestErr");
 const ServerErr = require("../errors/ServerErr");
 
+const {
+  badRequestError, conflictErr, notFoundErr, serverErr
+} = require("../utils/errorTexts.js");
+
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new BadRequestErr("Неккоректные данные");
+        throw new BadRequestErr(badRequestError.findUser);
       }
       return res.send({ data: user });
     })
@@ -28,11 +32,11 @@ const createUser = (req, res, next) => {
   } = req.body;
 
   if (!email || !password) {
-    throw new BadRequestErr("Неккоректные данные. Передайте правильные почту или пароль");
+    throw new BadRequestErr(badRequestError.createUserFatal);
   }
   User.findOne({ email }).then((data) => {
     if (data) {
-      throw new ConflictErr("Пользователь с такой почтой уже зарегистрирован");
+      throw new ConflictErr(conflictErr.conflictEmail);
     }
     return bcrypt.hash(password, 10);
   })
@@ -68,11 +72,11 @@ const updateUserInfo = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === "ValidationError") {
-        throw new BadRequestErr("Неккоректные данные");
+        throw new BadRequestErr(badRequestError.fatal);
       } else if (error.name === "NotFound") {
-        throw new NotFoundErr("Ресурс не найден");
+        throw new NotFoundErr(notFoundErr.userId);
       } else {
-        throw new ServerErr("Ошибка сервера");
+        throw new ServerErr(serverErr.error);
       }
     }).catch(next);
 };
@@ -80,7 +84,7 @@ const updateUserInfo = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new BadRequestErr("Неккоректные данные. Передайте правильные почту или пароль");
+    throw new BadRequestErr(badRequestError.loginFatal);
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
