@@ -57,7 +57,7 @@ const deleteMovie = (req, res, next) => {
       }
       moviesModel.deleteOne(movie)
         .then(() => {
-          return res.status(200).send({ message: statusOk.deleteMovie });
+          return res.status(200).send({ message: statusOk.removeMovie });
         }).catch(next);
     }).catch(next);
 };
