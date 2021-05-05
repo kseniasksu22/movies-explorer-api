@@ -1,5 +1,5 @@
 const express = require("express");
-
+const cors = require("cors");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
@@ -15,6 +15,21 @@ const dataBaseUrl = require("./utils/config.js");
 const { PORT = 3000 } = process.env;
 
 const app = express();
+
+const options = {
+  origin: [
+    "http://localhost:3000",
+    "https://moviesksu.nomoredomains.club",
+    "http://moviesksu.nomoredomains.club",
+    "https://api.moviesksu.nomoredomains.club",
+    "http://api.moviesksu.nomoredomains.club",
+  ],
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ["Content-Type", "origin", "Authorization"],
+  credentials: true,
+};
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -36,6 +51,7 @@ mongoose
     console.log("Not Connected to Database ERROR! ", err);
   });
 
+app.use("*", cors(options));
 app.use(helmet());
 
 app.use(parser.json());
