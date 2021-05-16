@@ -11,7 +11,7 @@ const {
 
 const getMovie = (req, res, next) => {
   moviesModel
-    .find({})
+    .find({ owner: req.user._id })
     .then((movies) => {
       res.send(movies);
     })
